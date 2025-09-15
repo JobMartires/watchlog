@@ -1,45 +1,74 @@
-from datetime import datetime
 import csv
 import random
 
 def main():
-    choice = input(f"\n\n[1] Add [2] Read [3] Random [4] Remove\n")
+    choice = input(f"\n\n[1] Add [2] Remove [3] Display [4] Random\n")
     if choice == "1":
         addEntry()
     elif choice == "2":
-        readEntry()
-    elif choice == "3":
-        randomEntry()
-    elif choice == "4":
         removeEntry()
+    elif choice == "3":
+        displayEntry()
+    elif choice == "4":
+        randomEntry()
 
-# adds entry to the csv file
+
 def addEntry():
-    month = datetime.today().month
-    day = datetime.today().day
-    year = datetime.today().year
     title = input(f"Title: ")
     season = input(f"Season: ")
     episode = input(f"Episode: ")
-    entry = (f"{title},{season},{episode},{month},{day},{year}")
-    with open("watchlog.csv", "a")  as f:
-        f.write(f"{entry.replace("'","")}\n")
-    readEntry()
+    entry = [title,season,episode3]
+    with open("watchlog.csv", "a", newline='')  as f:
+        f.write(f"{entry}\n")
+    displayEntry()
 
-# access the csv and display each entry per row
-def readEntry():
+
+def removeEntry():
+    displayEntry()
+    fullList = csvToMemory()
+    entryNum = input(f"Which entry should be removed? [1-{len(fullList)}] [0] Cancel\n")
+    if entryNum == '0':
+        print(f"No entry deleted.")
+    else:
+        n = 0
+        while n < len(fullList):
+            if n != (entryNum-1):
+                with open("watchlog.csv", "a",newline='') as f:
+                    f.write(f"{fullList[n]}")
+                    n =+ 1
+                    continue
+            else:
+                n =+ 1
+                continue
+
+
+def displayEntry():
     with open("watchlog.csv", newline='') as f:
         read = csv.reader(f)
         for item in read:
             print(f"════════════════════════════════════════════════════════════════")
-            print(f"  {item[0].ljust(45)}   Se{item[1]}   Ep{item[2]}")
+            print(f"  {item[0].ljust(45).replace("[", "").replace("'", "")}", end="")
+            print(f"   Se {item[1].replace("'", "")}", end="")
+            print(f"  Ep {item[2].replace("]", "").replace("'", "")}")
             print(f"════════════════════════════════════════════════════════════════")
 
 
-def removeEntry():
-    print(f"Remove entry function here")
+def csvToMemory():
+    fullList = []
+    with open("watchlog.csv", newline='') as f:
+        read = csv.reader(f)
+        for item in read:
+            fullList.append(item)
+    return fullList
+
 
 def randomEntry():
-    print(f"Random Entry display here")
+    fullList = csvToMemory()
+
+    pick = random.randint(0,(len(fullList))-1)
+    print(f"════════════════════════════════════════════════════════════════")
+    print(f"  {fullList[pick][0].ljust(45)}   Se {fullList[pick][1]}   Ep {fullList[pick][2]}")
+    print(f"════════════════════════════════════════════════════════════════")
+
 
 main()
